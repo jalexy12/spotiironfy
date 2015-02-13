@@ -30,9 +30,19 @@ module.exports = function (grunt) {
                 plugins: []
             },
         },
+        watch: {
+            scripts: {
+                files: ['**/*.js'],
+                tasks: ['dev'],
+                options: {
+                    spawn: false,
+                },
+            },
+        },
     });
 
     grunt.loadNpmTasks("grunt-webpack");
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask("prod", ["webpack:prod"]);
     grunt.registerTask("dev",  ["webpack:dev"]);
