@@ -27,6 +27,8 @@ class Track {
 
         Utils.assertNumber(data.albumID, 'AlbumID should be a string');
         this.albumID = data.albumID;
+
+        this.media = data.media;
         
         Utils.assertNumber(data.duration, 'Duration should be a number');
         this.duration = data.duration;

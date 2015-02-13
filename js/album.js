@@ -26,7 +26,7 @@ class Album {
 
         Utils.assertNumber(data.albumID, 'AlbumID should be a number');
         this.ID = data.ID;
-
+        this.link = data.link;
         Utils.assertString(data.genre, 'Genre should be a string');
         this.genre = data.genre;
 
@@ -34,7 +34,7 @@ class Album {
         this.label = data.label;
 
         Utils.assertString(data.url, 'URL should be a string');
-        this.cover = data.url;
+        this.cover = data.cover;
 
         Utils.assertNumber(data.price, 'Price should be a number');
         this.price = data.price;

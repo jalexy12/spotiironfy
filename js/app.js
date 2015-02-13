@@ -42,7 +42,7 @@ function newAlbumList(){
 	thirdAlbum
 	]
 }
-var albumList = newAlbumList();
+var albumList = [];
 var trackArray = [];
 
 var firstTrack = new TrackClass({
@@ -104,28 +104,37 @@ var baseUrl = ' https://api.spotify.com/v1/search?type=album&query='
 submit.on('click', searchForArtist);
 
 
-function searchForArtist(event, artist){
-	event.preventDefault();
-	var artist = search.val();
-	var searchUrl = baseUrl + artist;
-	fetch(searchUrl)
-	  .then(function(response) {
-	    return response.json()
-	  }).then(function(json) {
-	    console.log('parsed json', json)
-	  }).catch(function(ex) {
-	    console.log('parsing failed', ex)
-	  })
+function searchForArtist(event){
+    event.preventDefault();
+    var userInput = search.val()
+
+    var albumsApi = baseUrl + userInput;
+
+    $.ajax({crossDomain: true, url: albumsApi}).done(function (response) {
+       albumList= [];
+        console.log(response);
+        response.albums.items.forEach(function (item) {
+            albumList.push(new AlbumClass({
+                title: item.name,
+                price: 0,
+            	cover: item.images[2].url,
+            	link: item.external_urls.href
+            }));
+        });
+        updateAlbum();
+    });
 }
 
-function updateAlbum(event){
-	event.preventDefault();
+
+function updateAlbum(){
 	albumList.forEach(addAlbumToList);
+
 }
 
 
 function addAlbumToList (album) {
 	albums.append(albumView(album))
+	console.log(album.link);
 }
 
 function albumView(album) {
@@ -133,9 +142,7 @@ function albumView(album) {
 		<li class="js-albumList">
 			<h2>${album.title}</h2>
 			<img src="${album.cover}">
-			${album.release}
-			<button class="js-viewtracks">"View Tracks"</button>
-			<h3>Tracks</h3>
+			<button class="js-viewtracks">View Tracks</button>
             <ol class="albumtracklist">
             </ol>
 		</li>
