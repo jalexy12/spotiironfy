@@ -24,6 +24,9 @@ class Album {
 
         this.producers = [];
 
+        Utils.assertNumber(data.albumID, 'AlbumID should be a number');
+        this.ID = data.ID;
+
         Utils.assertString(data.genre, 'Genre should be a string');
         this.genre = data.genre;
 
