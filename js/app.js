@@ -42,7 +42,7 @@ function newAlbumList(){
 	thirdAlbum
 	]
 }
-var albumList = [];
+
 var trackArray = [];
 
 var firstTrack = new TrackClass({
@@ -99,42 +99,67 @@ thirdAlbum.addTrack(fifthTrack);
 var search = $('.js-searchalbums');
 var submit = $('.js-submit');
 var albums = $('.js-list');
-var tracksList = $('.js-tracklist')
-var baseUrl = ' https://api.spotify.com/v1/search?type=album&query='
+var tracksList = $('.js-tracklist');
+var baseUrl = ' https://api.spotify.com/v1/search?type=album&query=';
 submit.on('click', searchForArtist);
 
 
-function searchForArtist(event){
+
+function searchForArtist(event) {
     event.preventDefault();
     var userInput = search.val()
-
+    var albumList = [];
     var albumsApi = baseUrl + userInput;
-
-    $.ajax({crossDomain: true, url: albumsApi}).done(function (response) {
-       albumList= [];
-        console.log(response);
-        response.albums.items.forEach(function (item) {
+    albums.empty();
+    $.ajax({
+        crossDomain: true,
+        url: albumsApi
+    }).done(function(albumResponse) {
+    	// console.log(albumResponse)
+        albumResponse.albums.items.forEach(function(item) {
             albumList.push(new AlbumClass({
                 title: item.name,
                 price: 0,
-            	cover: item.images[2].url,
-            	link: item.external_urls.href
+                cover: item.images[2].url,
+                link: item.href
             }));
         });
-        updateAlbum();
+        updateAlbum(albumList);
     });
 }
 
 
-function updateAlbum(){
-	albumList.forEach(addAlbumToList);
+function updateAlbum(albums){
+		albums.forEach(addAlbumToList);
+	}
 
+function getAlbumInfo(album) {
+    event.preventDefault();
+    var trackURL = album.link;
+    $.ajax({
+        crossDomain: true,
+        url: trackURL
+    }).done(function(response) {
+        console.log(response);
+        response.tracks.items.forEach(function (item){
+        	album.addTrack(new TrackClass({
+        		title: item.name,
+        	}));
+        });
+        // response.forEach(function (item) {
+        //     album.artists.push(new TrackClass({
+        //     }));
+        // });
+
+    });
 }
+
+
+
 
 
 function addAlbumToList (album) {
 	albums.append(albumView(album))
-	console.log(album.link);
 }
 
 function albumView(album) {
@@ -147,24 +172,21 @@ function albumView(album) {
             </ol>
 		</li>
 	`);
-    albumLi.find('.js-viewtracks').on('click', function() {
-        album.tracks.forEach(function(track) {
-            addTrackToAlbum(albumLi.find('.albumtracklist'), track);
-        })
-        
-    });
+    $(".js-albumlist").on('click', '.js-viewtracks', getAlbumInfo(album))
+    album.tracks.forEach(function (track) {
+        addTrackToAlbum(albumLi.find('.albumtracklist'), track);
+    })
     return albumLi;
-}
+};
 
-function addTrackToAlbum(tracksList, track){
-	var trackLi = $(`
+function addTrackToAlbum(track) {
+    var trackLi = $(`
 	<li class="js-tracklist">
-		<h3>${track.title}</h3>
-		<span>${track.duration}</span>
-		<button class="play">Play</button>
+		<h3>${album.tracks.title}</h3>
+		<span>${album.tracks.duration}</span>
+		<button class="js-play">Play</button>
 	</li>
 `);
-	tracksList.append(trackLi);
-
+    tracksList.append(trackLi);
 
 }
